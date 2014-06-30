@@ -11,10 +11,11 @@
 |
 */
 
-Route::get('/', function()
-{
-	var_dump(Sentry::getUser());
-});
-
-
+Route::controller('welcome', 'WelcomeController');
 Route::controller('users', 'UserController');
+
+Route::group(array('before' => 'auth'), function()
+{
+	Route::get('/', 'ShiftplanController@getIndex');
+	Route::controller('shiftplan', 'ShiftplanController');
+});

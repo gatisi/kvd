@@ -4,6 +4,12 @@
 
 class UserController extends BaseController {
 
+	public function __construct() {
+		$this->beforeFilter('auth', array('only'=>array('getLogout', 'getStatus', 'getInvite', 'postInvite')));
+	}
+
+
+
 	public function getRegister(){
 		return View::make('users/register');
 	}
@@ -42,9 +48,11 @@ class UserController extends BaseController {
 	}
 
 	function getLogin(){
-		return View::make('users/login');
+		$error = Session::get('login_error');
+		Session::forget('login_error');
+		return View::make('users/login')->with('error_message', $error);
 	}
-	function postLogin(){		
+	function postLogin(){			
 		try
 		{
 			$credentials = array(
@@ -53,39 +61,48 @@ class UserController extends BaseController {
 				);
 
 			$user = Sentry::authenticate($credentials, Input::has('remember_me') and Input::get('remember_me') == 'checked');
+			return URL::to('/shiftplan');
+		}
 
-			echo Sentry::Check();
-			return;
+		catch (Cartalyst\Sentry\Users\LoginRequiredException $e)
+		{
+			Session::put('login_error','Login field is required.');
+			return Response::json('Validation failed', 400);
 		}
-		catch (Cartalyst\Sentry\Users\LoginRequiredException $e){
-			$error_message = 'Login field is required.';
+		catch (Cartalyst\Sentry\Users\PasswordRequiredException $e)
+		{
+			Session::put('login_error','Password field is required.');
+			return Response::json('Validation failed', 400);
 		}
-		catch (Cartalyst\Sentry\Users\PasswordRequiredException $e){
-			$error_message = 'Password field is required.';
+		catch (Cartalyst\Sentry\Users\WrongPasswordException $e)
+		{
+			Session::put('login_error','Wrong password, try again.');
+			return Response::json('Validation failed', 400);
 		}
-		catch (Cartalyst\Sentry\Users\WrongPasswordException $e){
-			$error_message = 'Wrong password, try again.';
+		catch (Cartalyst\Sentry\Users\UserNotFoundException $e)
+		{
+			Session::put('login_error','User was not found.');
+			return Response::json('Validation failed', 400);
 		}
-		catch (Cartalyst\Sentry\Users\UserNotFoundException $e){
-			$error_message = 'User was not found.';
-		}
-		catch (Cartalyst\Sentry\Users\UserNotActivatedException $e){
-			$error_message = 'User is not activated.';
-		}
+		catch (Cartalyst\Sentry\Users\UserNotActivatedException $e)
+		{
+			Session::put('login_error','User is not activated.');
+			return Response::json('Validation failed', 400);
+		}		
 		catch (Cartalyst\Sentry\Throttling\UserSuspendedException $e){
-			$error_message = 'User is suspended.';
+			Session::put('login_error','To many login attempts. Try again later.');
+			return Response::json('Validation failed', 400);
 		}
 		catch (Cartalyst\Sentry\Throttling\UserBannedException $e){
-			$error_message = 'User is banned.';
+			Session::put('login_error','User is banned.');
+			return Response::json('Validation failed', 400);
 		}
-		if (!Sentry::Check()) {
-			return Redirect::to('users/login')->with('error_message', $error_message);
-		}
-
 	}
+
 
 	public function getLogout(){
 		Sentry::logout();
+		return Redirect::to('/');
 	}
 
 	public function getStatus(){
@@ -159,10 +176,6 @@ class UserController extends BaseController {
 		
 		$invite = Invite::find(Input::get('invite'));
 		if ($invite->check(Input::get('key'))) {
-			
-
-			
-
 			try
 			{
 				$credentials = array(
@@ -177,8 +190,6 @@ class UserController extends BaseController {
 				$user = Sentry::createUser($credentials);
 				$adminGroup = Sentry::findGroupById(3);
 				$user->addGroup($adminGroup);
-
-					
 			}
 			catch (Cartalyst\Sentry\Users\LoginRequiredException $e){
 				echo 'Login field is required.';

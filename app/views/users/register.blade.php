@@ -1,7 +1,10 @@
+@extends('layouts.guest')
+
+@section('content')
 {{Session::get('error_message')}}
 {{ Form::open(array('url' => 'users/register')) }}
-	<p>
-	{{Form::label('email', 'E-Mail')}}
+    <p>
+    {{Form::label('email', 'E-Mail')}}
     {{Form::email('email')}}
     </p>
     <p>
@@ -24,3 +27,15 @@
     {{Form::submit('Login');}}
     </p>
 {{ Form::close() }}
+@stop
+
+@section('scripts')
+
+@stop
+
+
+
+
+
+
+
