@@ -136,9 +136,9 @@ class UserController extends BaseController {
 		return View::make('users/invite')->with('user', $user);
 	}
 
-	public function postInvite(){
+	private function InviteUser($email, $first_name, $last_name, $message){
 		try{
-			Sentry::findUserByLogin(Input::get('email'));
+			$user = Sentry::findUserByLogin($email);
 				//  add new shifts to user here
 			echo 'add new shifts to existing user';
 		}
@@ -148,69 +148,92 @@ class UserController extends BaseController {
 			$user = Sentry::getUser();
 			$invite = new Invite;
 
-			$invite->email = Input::has('email') ? Input::get('email') : null;
-			$invite->message = Input::has('message') ? Input::get('message') : null;
+			$user = Sentry::createUser(array(
+				'email'     => $email,
+				'activated' => false,
+				'first_name' => $first_name,
+				'last_name' => $last_name,
+				'password' => $key
+				));
+
+			$code = $user->getResetPasswordCode();
+
+			$invite->email = $email;
+			$invite->message = $message;
 			$invite->manager = $user->id;
 			$invite->accepted = false;
-			$invite->code = $key;
-
+			$invite->code = $code;
 			$invite->save();
-			$activateLink = URL::to('/users/accept').'/'.$key.'/'.$invite->id;
-			echo $activateLink;
 
+			$activateLink = URL::to('/users/accept').'/'.$code.'/'.$invite->id;
+			echo $activateLink;
+			//email to user
+		}
+	}
+
+	public function postInvite2(){
+		$emails = Input::has('email') ? Input::get('email') : null;
+		$first_names = Input::has('first_name') ? Input::get('first_name') : null;
+		$last_names = Input::has('last_name') ? Input::get('last_name') : null;
+		$message = Input::has('message') ? Input::get('message') : null;
+		foreach ($emails as $key => $email) {
+			$validator = Validator::make(
+				array('email' => $email),
+				array('email' => 'required|email')
+				);
+			if($validator->passes()){
+				$this->InviteUser($email, $first_names[$key], $last_names[$key], $message);
+			}else{
+
+			}
 		}
 	}
 
 	public function getAccept($code, $id){
 
-		$invite = Invite::find($id);
-
-		if ($invite->check($code)){
-			return View::make('users/accept')->with('invite', $invite);
-		}else{
+		if($invite = Invite::find($id)){
+			if ($invite->check($code)){
+				return View::make('users/accept')->with('invite', $invite)->with('code', $code);
+			}else{
+				echo "Something has gon Wrong!!";
+			}
+		}
+		else{
 			echo "Something has gon Wrong!!";
 		}
+
 	}
 
 	public function postAccept(){
-		
-		$invite = Invite::find(Input::get('invite'));
-		if ($invite->check(Input::get('key'))) {
-			try
+		try
+		{
+			$user = Sentry::findUserByLogin(Input::get('email'));
+			$code = Input::get('code');
+			if ($user->checkResetPasswordCode($code))
 			{
-				$credentials = array(
-					'email'    => $invite->email,
-					'password' => Input::has('password') ? Input::get('password') : null,
-					'first_name' => Input::has('firstname') ? Input::get('fristname') : null,
-					'last_name' => Input::has('lastname') ? Input::get('lastname') : null,
-					'organization' => "!!get organization users@postAccept!!",
-					'role' => 'user',
-					'activated' => true
-					);
-				$user = Sentry::createUser($credentials);
-				$adminGroup = Sentry::findGroupById(3);
-				$user->addGroup($adminGroup);
+				if ($user->attemptResetPassword($code, Input::get('password')))
+				{
+            		$user->activated = true;
+            		$user->first_name = Input::has('firstname') ? Input::get('firstname') : null;
+            		$user->last_name = Input::has('lastname') ? Input::get('lastname') : null; 
+            		$user->save();
+            		echo 'you can log in now!';         		
+				}
+				else
+				{
+            		echo "faile";
+				}
 			}
-			catch (Cartalyst\Sentry\Users\LoginRequiredException $e){
-				echo 'Login field is required.';
+			else
+			{
+        		echo "wrong code";
 			}
-			catch (Cartalyst\Sentry\Users\PasswordRequiredException $e){
-				echo 'Password field is required.';
-			}
-			catch (Cartalyst\Sentry\Users\UserExistsException $e){
-
-				//If user already registred
-				//  add new shifts to user here
-
-				echo 'User with this login already exists.';
-			}
-			catch (Cartalyst\Sentry\Groups\GroupNotFoundException $e){
-				echo 'Group was not found.';
-			}
-
-		}else{
-			echo "error";
 		}
+		catch (Cartalyst\Sentry\Users\UserNotFoundException $e)
+		{
+			echo 'User was not found.';
+		}
+
 	}
 
 

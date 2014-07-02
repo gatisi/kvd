@@ -16,8 +16,8 @@
     {{Form::label('password', 'Password');}}
     {{Form::password('password')}}
     </p>
-    {{Form::hidden('invite', $invite->id)}}
-    {{Form::hidden('key', $invite->code)}}
+    {{Form::hidden('email', $invite->email)}}
+    {{Form::hidden('code', $code)}}
     <p>
     {{Form::submit('Login');}}
     </p>

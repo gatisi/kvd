@@ -48,7 +48,9 @@
 	<!-- Modal -->  
 	<div class="modal fade" id="loginFormPopup" tabindex="-1" role="dialog" aria-labelledby="loginForm" aria-hidden="true">  
 		<div class="modal-dialog">  
-			<div class="modal-content"></div>  
+			<div class="modal-content">
+				
+			</div>  
 		</div>  
 	</div>  
 	<!-- /.modal --> 
