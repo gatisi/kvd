@@ -81,8 +81,21 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 	}
 
 
-    public function contacts()
-    {
-        return $this->belongsToMany('User', 'contacts', 'user_id', 'contact_id');
-    }
+	public function contacts()
+	{
+		return $this->belongsToMany('User', 'contacts', 'user_id', 'contact_id');
+	}
+
+	/* ads new contact to curent user - if pivot not found, pivot added. */
+	public function saveContact($id){
+		$contact = new Contact;
+		if(!$contact->whereUser_idAndContact_id($this->id, $id)->get()->first()){
+			$contact->user_id = $this->id;
+			$contact->contact_id = $id;
+			$contact->save();
+			echo true;
+		}else{
+			echo false;
+		}
+	}
 }

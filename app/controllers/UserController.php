@@ -237,10 +237,10 @@ class UserController extends BaseController {
 	}
 
 	public function getTest(){
-		$contacts = User::find(2)->contacts;
-		foreach ($contacts as $key => $value) {
-			echo  $value->email.'<br>';
-		}
+		$contacts = User::find(2);
+		$contacts->saveContact(99);
+		//echo "done";
+
 	}
 
 
