@@ -138,9 +138,16 @@ class UserController extends BaseController {
 
 	private function InviteUser($email, $first_name, $last_name, $message){
 		try{
-			$user = Sentry::findUserByLogin($email);
-				//  add new shifts to user here
-			echo 'add new shifts to existing user';
+			$user = Sentry::getUser();
+			$contact = Sentry::findUserByLogin($email);
+			$added = $user->saveContact($contact->id);
+			$contact->saveContact($user->id);
+			if($added){
+				$report = 'Contact added.';
+			}else{
+				$report = 'Contact already exists.';
+			}
+			return $report;
 		}
 		catch (Cartalyst\Sentry\Users\UserNotFoundException $e){
 
@@ -148,7 +155,7 @@ class UserController extends BaseController {
 			$user = Sentry::getUser();
 			$invite = new Invite;
 
-			$user = Sentry::createUser(array(
+			$contact = Sentry::createUser(array(
 				'email'     => $email,
 				'activated' => false,
 				'first_name' => $first_name,
@@ -156,22 +163,26 @@ class UserController extends BaseController {
 				'password' => $key
 				));
 
-			$code = $user->getResetPasswordCode();
+			$code = $contact->getResetPasswordCode();
 
 			$invite->email = $email;
 			$invite->message = $message;
-			$invite->manager = $user->id;
+			$invite->manager = $contact->id;
 			$invite->accepted = false;
 			$invite->code = $code;
 			$invite->save();
 
 			$activateLink = URL::to('/users/accept').'/'.$code.'/'.$invite->id;
 			echo $activateLink;
-			//email to user
+
+			$user->saveContact($contact->id);
+			$contact->saveContact($user->id);
+
+			return 'Invite sent and contact added.';
 		}
 	}
 
-	public function postInvite2(){
+	public function postInvite(){
 		$emails = Input::has('email') ? Input::get('email') : null;
 		$first_names = Input::has('first_name') ? Input::get('first_name') : null;
 		$last_names = Input::has('last_name') ? Input::get('last_name') : null;
@@ -182,11 +193,13 @@ class UserController extends BaseController {
 				array('email' => 'required|email')
 				);
 			if($validator->passes()){
-				$this->InviteUser($email, $first_names[$key], $last_names[$key], $message);
+				$result = $this->InviteUser($email, $first_names[$key], $last_names[$key], $message);
+				$report['success'][]=array($email, $result);
 			}else{
-
+				$report['faile'][] = array($email, $first_names[$key], $last_names[$key]);
 			}
 		}
+		return View::make('users/reports/invite')->with('report', $report);
 	}
 
 	public function getAccept($code, $id){
@@ -237,9 +250,7 @@ class UserController extends BaseController {
 	}
 
 	public function getTest(){
-		$contacts = User::find(2);
-		$contacts->saveContact(99);
-		//echo "done";
+		var_dump(Sentry::getUser());
 
 	}
 
