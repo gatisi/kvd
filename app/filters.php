@@ -38,6 +38,8 @@ Route::filter('auth', function()
 	if (Auth::guest()) return Redirect::guest('login');
 });
 */
+
+//modifyed to use Sentry
 Route::filter('auth', function()
 {
         if ( ! Sentry::check())
@@ -61,10 +63,20 @@ Route::filter('auth.basic', function()
 | response will be issued if they are, which you may freely change.
 |
 */
-
+/*
 Route::filter('guest', function()
 {
 	if (Auth::check()) return Redirect::to('/');
+});
+*/
+
+//modifyed to use Sentry
+Route::filter('guest', function()
+{
+        if ( Sentry::check())
+        {
+                return Redirect::to('/');
+        }
 });
 
 /*
@@ -85,3 +97,7 @@ Route::filter('csrf', function()
 		throw new Illuminate\Session\TokenMismatchException;
 	}
 });
+
+
+
+

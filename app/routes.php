@@ -13,6 +13,7 @@
 
 Route::controller('welcome', 'WelcomeController');
 Route::controller('users', 'UserController');
+Route::controller('shiftplan', 'ShiftplanController');
 
 Route::group(array('before' => 'auth'), function()
 {

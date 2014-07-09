@@ -5,7 +5,23 @@
 class UserController extends BaseController {
 
 	public function __construct() {
-		$this->beforeFilter('auth', array('only'=>array('getLogout', 'getStatus', 'getInvite', 'postInvite')));
+		$this->beforeFilter('auth', array('except'=>array(
+			'getRegister', 
+			'postRegister', 
+			'getLogin', 
+			'postLogin',
+			'getStatus',
+			'getTest',
+			'getActivate',
+			'getAccept',
+			'postAccept'
+			)));
+		$this->beforeFilter('guest', array('only'=>array(
+			'getRegister', 
+			'postRegister', 
+			'getLogin', 
+			'postLogin',
+			)));
 	}
 
 
@@ -118,17 +134,19 @@ class UserController extends BaseController {
 		{
 			$user = Sentry::findUserById($id);
 			if ($user->attemptActivation($code)){
-				echo "Activated";
+				$report = "Your account has been activated. You can login now.";
 			}else{
-				echo "Not activated";
+				$report =  "Sorry, acctivation failed. Activation link you provided was invalid or account is already activated.";
 			}
+			return View::make('users/reports/activate')->with('report', $report);
 		}
 		catch (Cartalyst\Sentry\Users\UserNotFoundException $e){
-			echo 'User was not found.';
+			$report =  "Sorry, acctivation failed. Activation link you provided was invalid or account is already activated.";
 		}
 		catch (Cartalyst\Sentry\Users\UserAlreadyActivatedException $e){
-			echo 'User is already activated.';
+			$report =  "Sorry, acctivation failed. Activation link you provided was invalid or account is already activated.";
 		}
+		return View::make('users/reports/activate')->with('report', $report);
 	}
 
 	public function getInvite(){
@@ -175,10 +193,13 @@ class UserController extends BaseController {
 			$activateLink = URL::to('/users/accept').'/'.$code.'/'.$invite->id;
 			echo $activateLink;
 
-			$user->saveContact($contact->id);
-			$contact->saveContact($user->id);
-
-			return 'Invite sent and contact added.';
+			if($user->saveContact($contact->id)){
+				$result = 'Invite sent and contact added.';
+			}
+			else{
+				$result = $email.' is already in your contacts.';
+			}
+			return $result;
 		}
 	}
 
@@ -206,15 +227,17 @@ class UserController extends BaseController {
 
 		if($invite = Invite::find($id)){
 			if ($invite->check($code)){
-				return View::make('users/accept')->with('invite', $invite)->with('code', $code);
+				return View::make('users/accept')
+					->with('invite', $invite)
+					->with('code', $code);
 			}else{
-				echo "Something has gon Wrong!!";
+				$report =  "Sorry, the link you provided was invalid.";
 			}
 		}
 		else{
-			echo "Something has gon Wrong!!";
+			$report =  "Sorry, the link you provided was invalid.";
 		}
-
+		return View::make('users/reports/invite')->with('report', $report);
 	}
 
 	public function postAccept(){
@@ -222,29 +245,37 @@ class UserController extends BaseController {
 		{
 			$user = Sentry::findUserByLogin(Input::get('email'));
 			$code = Input::get('code');
-			if ($user->checkResetPasswordCode($code))
+			$invite_id = Input::get('invite');
+			var_dump($invite_id);
+			$invite = Invite::find($invite_id);
+			
+			if ($user->checkResetPasswordCode($code)&&$invite->check($code))
 			{
 				if ($user->attemptResetPassword($code, Input::get('password')))
 				{
-            		$user->activated = true;
-            		$user->first_name = Input::has('firstname') ? Input::get('firstname') : null;
-            		$user->last_name = Input::has('lastname') ? Input::get('lastname') : null; 
-            		$user->save();
-            		echo 'you can log in now!';         		
+					$invite->accept($code);
+					$user->activated = true;
+					$user->first_name = Input::has('firstname') ? Input::get('firstname') : null;
+					$user->last_name = Input::has('lastname') ? Input::get('lastname') : null; 
+					$user->save();
+					$report = "Your account has been activated. You can login now.";        		
 				}
 				else
 				{
-            		echo "faile";
+					$report =  "Sorry, the password you provided was invalid.";
 				}
 			}
 			else
 			{
-        		echo "wrong code";
+				$report =  "Sorry, acctivation failed. Activation link you provided was invalid.";
 			}
+			return View::make('users/reports/invite')->with('report', $report);
+
 		}
 		catch (Cartalyst\Sentry\Users\UserNotFoundException $e)
 		{
-			echo 'User was not found.';
+			$report =  "Sorry, acctivation failed. Activation link you provided was invalid.";
+			return View::make('users/reports/invite')->with('report', $report);
 		}
 
 	}

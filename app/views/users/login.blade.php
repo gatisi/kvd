@@ -9,17 +9,17 @@
 	<span class="help-block">{{$error_message}}</span>
 	<div class="form-group">
 		<label for="email">Email address</label>
-		{{Form::email('email')}}
+		{{Form::email('email', null, array('placeholder'=>'', 'class'=>'form-control '))}}
 	</div>
 	<div class="form-group">
 		<label for="password">Password</label>
-		{{Form::password('password')}}
+		{{Form::password('password', array('class'=>'form-control '))}}
 	</div>
 </div>
 
 <div class="modal-footer">
-	<button type="submit" class="btn btn-default">Submit</button>
-	<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+	<button type="submit" class="btn btn-default btn-success">Submit</button>
+	<button type="button" class="btn btn-default btn-danger" data-dismiss="modal">Close</button>
 </div>
 
 {{ Form::close() }}

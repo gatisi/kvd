@@ -94,9 +94,9 @@ class User extends SentryUserModel implements UserInterface, RemindableInterface
 			$contact->user_id = $this->id;
 			$contact->contact_id = $id;
 			$contact->save();
-			echo true;
+			return true;
 		}else{
-			echo false;
+			return false;
 		}
 	}
 }

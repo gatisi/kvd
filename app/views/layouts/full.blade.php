@@ -30,6 +30,7 @@
 				<ul class="nav navbar-nav">
 					<li class="active"><a href="#">New graf</a></li>
 					<li><a href="{{URL::action('UserController@getInvite')}}">Invite</a></li>
+					<li><a href="{{URL::action('ShiftplanController@getIndex')}}">Shifrplans</a></li>
 				</ul>
 				<ul class="nav navbar-nav navbar-right">
 					<li><a href="{{URL::action('UserController@getLogout')}}">Logout</a></li>
