@@ -84,7 +84,12 @@ class User extends SentryUserModel implements UserInterface, RemindableInterface
 
 	public function contacts()
 	{
-		return $this->belongsToMany('User', 'contacts', 'user_id', 'contact_id');
+		$contact = new Contact;
+		$contact_pivot = $contact->whereUser_id($this->id)->get()->all();
+		foreach ($contact_pivot as $p) {
+			$contacts[]=Sentry::findUserById($p['contact_id']);
+		}
+		return $contacts;
 	}
 
 	/* ads new contact to curent user - if pivot not found, pivot added. */

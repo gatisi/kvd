@@ -281,7 +281,37 @@ class UserController extends BaseController {
 	}
 
 	public function getTest(){
-		var_dump(Sentry::getUser());
+		$user = Sentry::getUser();
+		$contacts = $user->contacts();
+		$user_obj = new stdClass();
+		foreach ($contacts as $c) {
+			$user_obj->email = $c->email;
+			$user_obj->first_name = $c->first_name;
+			$user_obj->last_name = $c->last_name;
+			$user_obj->organization = $c->organization;
+			$user_obj->activated = $c->activated;
+			$user_obj->last_login = $c->last_login;
+			$list[]=$user_obj;
+		}
+		return json_encode($list);
+
+	}	
+	public function getContacts(){
+		$user = Sentry::getUser();
+		$contacts = $user->contacts();
+		
+		foreach ($contacts as $c) {
+			$user_obj = new stdClass();
+			$user_obj->id = $c->id;
+			$user_obj->email = $c->email;
+			$user_obj->first_name = $c->first_name;
+			$user_obj->last_name = $c->last_name;
+			$user_obj->organization = $c->organization;
+			$user_obj->activated = $c->activated;
+			$user_obj->last_login = $c->last_login;
+			$list[]=$user_obj;
+		}
+		return json_encode($list);
 
 	}
 

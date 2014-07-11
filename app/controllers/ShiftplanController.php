@@ -9,5 +9,6 @@ class ShiftplanController extends BaseController {
 	}	
 	public function getPartials($view){
 		return View::make('shiftplan/partials/'.$view);
-	}
+	}	
+
 }

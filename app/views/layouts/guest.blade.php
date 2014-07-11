@@ -4,7 +4,7 @@
 	<meta charset="UTF-8">
 	<title>Shiftplaner</title>
 
-		{{ HTML::style('http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css') }}
+		{{ HTML::style('/packages/bootstrap/css/bootstrap.min.css') }}
 		{{ HTML::style('http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css') }}
 
 </head>
@@ -59,7 +59,7 @@
 
 
 
-	{{ HTML::script('https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js') }}
-	{{ HTML::script('http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js') }}
+	{{ HTML::script('js/jquery-1.11.1.min.js') }}
+	{{ HTML::script('/packages/bootstrap/js/bootstrap.min.js') }}
 </body>
 </html>
