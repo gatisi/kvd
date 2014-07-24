@@ -3,10 +3,7 @@
 <head>
 	<meta charset="UTF-8">
 	<title>Shiftplaner</title>
-
-		{{ HTML::style('/packages/bootstrap/css/bootstrap.min.css') }}
-		{{ HTML::style('http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css') }}
-
+		{{ HTML::style('bower_resources/bootstrap/dist/css/bootstrap.min.css') }}
 </head>
 <body>
 	<nav class="navbar navbar-default" role="navigation">
@@ -59,7 +56,7 @@
 
 
 
-	{{ HTML::script('js/jquery-1.11.1.min.js') }}
-	{{ HTML::script('/packages/bootstrap/js/bootstrap.min.js') }}
+	{{ HTML::script('bower_resources/jquery/jquery.min.js') }}
+	{{ HTML::script('bower_resources/bootstrap/dist/js/bootstrap.min.js') }}
 </body>
 </html>

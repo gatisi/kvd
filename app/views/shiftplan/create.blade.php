@@ -10,6 +10,11 @@
 
 @stop
 
+@section('stylesheets')
+{{ HTML::style('bower_resources/bootstrap-timepicker/css/bootstrap-timepicker.min.css') }}
+@stop
+
+
 @section('scripts')
 <!-- Routs config for JS -->
 <script>
@@ -23,5 +28,6 @@
 {{HTML::script('js/angular/angular.min.js')}}
 {{HTML::script('js/angular/angular-route.min.js')}}
 {{HTML::script('js/shiftplan/createShiftplanApp.js')}}
+{{HTML::script('bower_resources/bootstrap-timepicker/js/bootstrap-timepicker.min.js')}}
 
 @stop

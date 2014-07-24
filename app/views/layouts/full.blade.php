@@ -7,7 +7,7 @@
 
 	<title>Grafix</title>
 
-	{{ HTML::style('/packages/bootstrap/css/bootstrap.min.css') }}
+	{{ HTML::style('bower_resources/bootstrap/dist/css/bootstrap.min.css') }}
 	
 
 	@yield('stylesheets')
@@ -60,8 +60,8 @@
 
 
 
-	{{ HTML::script('js/jquery-1.11.1.min.js') }}
-	{{ HTML::script('/packages/bootstrap/js/bootstrap.min.js') }}
+	{{ HTML::script('bower_resources/jquery/jquery.min.js') }}
+	{{ HTML::script('bower_resources/bootstrap/dist/js/bootstrap.min.js') }}
 
 
 	@yield('scripts')
