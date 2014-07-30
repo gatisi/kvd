@@ -15,14 +15,18 @@
 		}]);
 
 	createShiftplanApp.factory( 'newPlan', function() {
-		var object = {
+
+		var newplan = JSON.parse(localStorage.getItem('newplan')) || {
 			name:"",
 			workers:[],
 			shifts:[[], [], [], [], [], [], []]
 		};
 		return{
-			getObject: function(){ return object; },
-			setObject: function(updated){ object=updated; }
+			getObject: function(){ return newplan; },
+			setObject: function(updated){ 
+				newplan=updated;
+				//localStorage.setItem('newplan', JSON.stringify(newplan));
+			 }
 		}
 	});
 
@@ -49,7 +53,7 @@
 	createShiftplanApp.controller('workersController', function ($scope, $location, newPlan, contactsFactory) {
 		$scope.shiftplan = newPlan.getObject();
 		$scope.contacts = [];
-		console.log($scope.shiftplan);
+		//console.log($scope.shiftplan);
 		contactsFactory.getcontacts().success(function(data){
 			$scope.contacts=data;
 		});
@@ -58,7 +62,7 @@
 		}
 		$scope.removeWorker = function(id){
 			$scope.shiftplan.workers.splice($scope.shiftplan.workers.indexOf(id), 1);
-			console.log($scope.shiftplan.workers);
+			//console.log($scope.shiftplan.workers);
 		}
 		$scope.update = function() {
 			newPlan.setObject($scope.shiftplan);
@@ -76,7 +80,11 @@
 		$scope.newShift.end = "17:00";
 		$scope.newShift.workers = 1;
 		$scope.update = function() {
-			console.log($scope);
+			$.post("create",
+				$scope.shiftplan,
+				function(result){
+					$(".content").html("<pre>"+result+'</pre>');
+				});
 		};
 		$scope.clearModal = function(){
 			$scope.selecteddays = [ false, false, false, false, false, false, false ];
@@ -93,6 +101,7 @@
 						);
 				}
 			});
+			//console.log($scope.shiftplan.shifts);
 			$scope.newShift = {};
 			$scope.newShift.start = "9:00";
 			$scope.newShift.end = "17:00";
