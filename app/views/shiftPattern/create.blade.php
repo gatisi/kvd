@@ -2,7 +2,7 @@
 
 @section('content')
 
-<div ng-app="createShiftplanApp">
+<div ng-app="createShiftpatternApp">
 <div ng-view></div>
 </div>
 
@@ -27,7 +27,7 @@
 
 {{HTML::script('js/angular/angular.min.js')}}
 {{HTML::script('js/angular/angular-route.min.js')}}
-{{HTML::script('js/shiftplan/createShiftplanApp.js')}}
+{{HTML::script('js/shiftplan/createShiftpatternApp.js')}}
 {{HTML::script('bower_resources/bootstrap-timepicker/js/bootstrap-timepicker.min.js')}}
 
 @stop

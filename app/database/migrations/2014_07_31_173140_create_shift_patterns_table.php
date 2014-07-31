@@ -3,7 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class CreateShiftplansTable extends Migration {
+class CreateShiftPatternsTable extends Migration {
 
 	/**
 	 * Run the migrations.
@@ -12,9 +12,10 @@ class CreateShiftplansTable extends Migration {
 	 */
 	public function up()
 	{
-		Schema::create('shiftplans', function(Blueprint $table)
+		Schema::create('shift_patterns', function(Blueprint $table)
 		{
 			$table->increments('id');
+			$table->integer('user_id');
 			$table->string('name');
 			$table->text('workers');
 			$table->text('pattern');
@@ -30,7 +31,7 @@ class CreateShiftplansTable extends Migration {
 	 */
 	public function down()
 	{
-		Schema::drop('shiftplans');
+		Schema::drop('shift_patterns');
 	}
 
 }

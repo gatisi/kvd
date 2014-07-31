@@ -13,10 +13,10 @@
 
 Route::controller('welcome', 'WelcomeController');
 Route::controller('users', 'UserController');
-Route::controller('shiftplan', 'ShiftplanController');
+Route::controller('shiftplan', 'ShiftPatternController');
 
 Route::group(array('before' => 'auth'), function()
 {
-	Route::get('/', 'ShiftplanController@getIndex');
-	Route::controller('shiftplan', 'ShiftplanController');
+	Route::get('/', 'ShiftPatternController@getIndex');
+	Route::controller('shiftplan', 'ShiftPatternController');
 });

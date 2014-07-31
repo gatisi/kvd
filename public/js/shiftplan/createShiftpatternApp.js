@@ -1,10 +1,10 @@
-	var createShiftplanApp = angular.module('createShiftplanApp', ['ngRoute'], function($interpolateProvider) {
+	var createShiftpatternApp = angular.module('createShiftpatternApp', ['ngRoute'], function($interpolateProvider) {
 		$interpolateProvider.startSymbol('<%');
 		$interpolateProvider.endSymbol('%>');
 	});
 
 
-	createShiftplanApp.config(['$routeProvider',
+	createShiftpatternApp.config(['$routeProvider',
 		function($routeProvider) {
 			$routeProvider.
 			when('/name', {templateUrl: 'partials/name', controller: 'nameController'}).			
@@ -14,7 +14,7 @@
 			otherwise({redirectTo: '/name'});
 		}]);
 
-	createShiftplanApp.factory( 'newPlan', function() {
+	createShiftpatternApp.factory( 'newPlan', function() {
 
 		var newplan = JSON.parse(localStorage.getItem('newplan')) || {
 			name:"",
@@ -30,7 +30,7 @@
 		}
 	});
 
-	createShiftplanApp.factory( 'contactsFactory', function($http, $location) {
+	createShiftpatternApp.factory( 'contactsFactory', function($http, $location) {
 
 		return{
 			getcontacts : function() {
@@ -42,37 +42,37 @@
 		}
 	});
 
-	createShiftplanApp.controller('nameController', function ($scope, $location, newPlan) {
-		$scope.shiftplan = newPlan.getObject();
+	createShiftpatternApp.controller('nameController', function ($scope, $location, newPlan) {
+		$scope.shiftpattern = newPlan.getObject();
 		$scope.update = function() {
-			newPlan.setObject($scope.shiftplan);
+			newPlan.setObject($scope.shiftpattern);
 			$location.path( "/workers" );
 
 		};
 	});
-	createShiftplanApp.controller('workersController', function ($scope, $location, newPlan, contactsFactory) {
-		$scope.shiftplan = newPlan.getObject();
+	createShiftpatternApp.controller('workersController', function ($scope, $location, newPlan, contactsFactory) {
+		$scope.shiftpattern = newPlan.getObject();
 		$scope.contacts = [];
-		//console.log($scope.shiftplan);
+		//console.log($scope.shiftpattern);
 		contactsFactory.getcontacts().success(function(data){
 			$scope.contacts=data;
 		});
 		$scope.addWorker = function(id){
-			$scope.shiftplan.workers.push(id);
+			$scope.shiftpattern.workers.push(id);
 		}
 		$scope.removeWorker = function(id){
-			$scope.shiftplan.workers.splice($scope.shiftplan.workers.indexOf(id), 1);
-			//console.log($scope.shiftplan.workers);
+			$scope.shiftpattern.workers.splice($scope.shiftpattern.workers.indexOf(id), 1);
+			//console.log($scope.shiftpattern.workers);
 		}
 		$scope.update = function() {
-			newPlan.setObject($scope.shiftplan);
+			newPlan.setObject($scope.shiftpattern);
 			$location.path( "/pattern" );
 		};
 	});
 
-	createShiftplanApp.controller('patternController', function ($scope, $location, newPlan) {
-		$scope.shiftplan = newPlan.getObject();
-		if(!$scope.shiftplan.shifts){$scope.shiftplan.shifts = [];};
+	createShiftpatternApp.controller('patternController', function ($scope, $location, newPlan) {
+		$scope.shiftpattern = newPlan.getObject();
+		if(!$scope.shiftpattern.shifts){$scope.shiftpattern.shifts = [];};
 		$scope.weekdays =     ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
 		$scope.newShift = {};
 		$scope.selecteddays = [ false, false, false, false, false, false, false ];
@@ -81,7 +81,7 @@
 		$scope.newShift.workers = 1;
 		$scope.update = function() {
 			$.post("create",
-				$scope.shiftplan,
+				$scope.shiftpattern,
 				function(result){
 					$(".content").html("<pre>"+result+'</pre>');
 				});
@@ -94,21 +94,22 @@
 			$('#newShift').modal('show');
 		};
 		$scope.saveNewShift = function(){
+			console.log($scope.selecteddays);
 			angular.forEach($scope.selecteddays, function(set, day) {
 				if(set){
-					$scope.shiftplan.shifts[day].push(
+					$scope.shiftpattern.shifts[day].push(
 						$scope.newShift
 						);
 				}
 			});
-			//console.log($scope.shiftplan.shifts);
+			//console.log($scope.shiftpattern.shifts);
 			$scope.newShift = {};
 			$scope.newShift.start = "9:00";
 			$scope.newShift.end = "17:00";
 			$scope.newShift.workers = 1;
 		};
 		$scope.deleteShift = function(day, shift){
-			$scope.shiftplan.shifts[day].splice(shift, 1);
+			$scope.shiftpattern.shifts[day].splice(shift, 1);
 		};
 
 	});

@@ -4,7 +4,7 @@
 	<div class="row">
 		<div ng-repeat="day in weekdays" id="day<%$index%>"  ng-class="{'col-md-2': $index<5, 'col-md-1': $index>4}">
 			<h4><%day%></h4>
-			<div ng-repeat="s in shiftplan.shifts[$index] track by $index">
+			<div ng-repeat="s in shiftpattern.shifts[$index] track by $index">
 				<button type="button" class="btn btn-default btn-xs pull-right" ng-click="deleteShift($parent.$index, $index)">
 					<span class="glyphicon glyphicon-minus"></span>
 				</button>
