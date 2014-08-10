@@ -56,7 +56,7 @@
 
 
 
-	{{ HTML::script('bower_resources/jquery/jquery.min.js') }}
+	{{ HTML::script('bower_resources/jquery/dist/jquery.min.js') }}
 	{{ HTML::script('bower_resources/bootstrap/dist/js/bootstrap.min.js') }}
 </body>
 </html>

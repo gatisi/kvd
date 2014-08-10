@@ -14,6 +14,7 @@
 Route::controller('welcome', 'WelcomeController');
 Route::controller('users', 'UserController');
 Route::controller('shiftplan', 'ShiftPatternController');
+Route::controller('shiftplaner', 'ShiftPlanerController');
 
 Route::group(array('before' => 'auth'), function()
 {

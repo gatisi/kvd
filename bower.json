@@ -1,3 +1,6 @@
 {
-  "name": "grafix"
+  "name": "grafix",
+  "dependencies": {
+    "moment": "~2.8.0"
+  }
 }

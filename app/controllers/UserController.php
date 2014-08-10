@@ -281,19 +281,7 @@ class UserController extends BaseController {
 	}
 
 	public function getTest(){
-		$user = Sentry::getUser();
-		$contacts = $user->contacts();
-		$user_obj = new stdClass();
-		foreach ($contacts as $c) {
-			$user_obj->email = $c->email;
-			$user_obj->first_name = $c->first_name;
-			$user_obj->last_name = $c->last_name;
-			$user_obj->organization = $c->organization;
-			$user_obj->activated = $c->activated;
-			$user_obj->last_login = $c->last_login;
-			$list[]=$user_obj;
-		}
-		return json_encode($list);
+		var_dump(Sentry::getUser()->id);
 
 	}	
 	public function getContacts(){
@@ -309,11 +297,12 @@ class UserController extends BaseController {
 			$user_obj->organization = $c->organization;
 			$user_obj->activated = $c->activated;
 			$user_obj->last_login = $c->last_login;
-			$list[]=$user_obj;
+			$list[$c->id]=$user_obj;
 		}
 		return json_encode($list);
 
 	}
+
 
 
 

@@ -26,7 +26,7 @@
 			setObject: function(updated){ 
 				newplan=updated;
 				//localStorage.setItem('newplan', JSON.stringify(newplan));
-			 }
+			}
 		}
 	});
 
@@ -53,7 +53,7 @@
 	createShiftpatternApp.controller('workersController', function ($scope, $location, newPlan, contactsFactory) {
 		$scope.shiftpattern = newPlan.getObject();
 		$scope.contacts = [];
-		//console.log($scope.shiftpattern);
+
 		contactsFactory.getcontacts().success(function(data){
 			$scope.contacts=data;
 		});
@@ -79,6 +79,7 @@
 		$scope.newShift.start = "9:00";
 		$scope.newShift.end = "17:00";
 		$scope.newShift.workers = 1;
+		console.log($scope.shiftpattern);
 		$scope.update = function() {
 			$.post("create",
 				$scope.shiftpattern,
@@ -94,12 +95,17 @@
 			$('#newShift').modal('show');
 		};
 		$scope.saveNewShift = function(){
-			console.log($scope.selecteddays);
+			//console.log($scope.selecteddays);
 			angular.forEach($scope.selecteddays, function(set, day) {
 				if(set){
-					$scope.shiftpattern.shifts[day].push(
-						$scope.newShift
-						);
+					for (var i = 0; i < $scope.newShift.workers; i++) {
+						
+						$scope.shiftpattern.shifts[day].push(
+							{'start':$scope.newShift.start, 'end':$scope.newShift.end, 'workers': 1}
+							);
+
+					};
+
 				}
 			});
 			//console.log($scope.shiftpattern.shifts);
