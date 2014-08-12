@@ -2,14 +2,11 @@
 
 class ShiftPlanerController extends \BaseController {
 
-	/**
-	 */
 	public function getIndex()
 	{
 		return View::make('shiftPlaner/index');
 	}
-	/**
-	 */
+
 	public function getManage()
 	{
 		return View::make('shiftPlaner/manage');
@@ -36,15 +33,12 @@ class ShiftPlanerController extends \BaseController {
 	public function postCreate(){
 		var_dump($_POST);
 		$user = User::find(Sentry::getUser()->id);
-		$plan = new Shiftplan;
+		$plan = Shiftplan::firstOrNew(array('month'=>Input::get('month')));
 		$plan->month = Input::get('month');
 		$plan->name = Input::has('name') ? Input::get('name') : 'unspecified';
 		$plan->pattern_id = Input::has('pattern') ? Input::get('pattern') : 0;
 		$plan->plan = json_encode(Input::get('plan'), JSON_FORCE_OBJECT);
-
-
-		$user->Shiftplan()->save($plan, array('manager' => 1 ));
-
+		$plan->save();
 	}	
 
 	public function getPartials($view){

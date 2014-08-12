@@ -12,7 +12,7 @@ return array(
 	| array format for simplicity. Here you can tweak the fetch style.
 	|
 	*/
-
+	'log' => true,
 	'fetch' => PDO::FETCH_CLASS,
 
 	/*

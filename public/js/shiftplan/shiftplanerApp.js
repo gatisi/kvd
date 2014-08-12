@@ -45,6 +45,17 @@
 				})
 			}
 		}
+	});	
+
+	shiftplanerApp.factory( 'shiftplansFactory', function($http, $location) {
+		return{
+			getplan : function(pattern, year, month) {
+				return $http({
+					url: window.grafixapp.shiftplansURL+'/shiftplan/'+pattern+'/'+year+'/'+month,
+					method: 'GET'
+				})
+			}
+		}
 	});
 
 	shiftplanerApp.controller('listController', function ($scope, $location, listFactory) {
@@ -57,7 +68,8 @@
 			$location.path( "/plan" );
 		}
 	});
-	shiftplanerApp.controller('planController', function ($scope, $location, listFactory, contactsFactory) {
+
+	shiftplanerApp.controller('planController', function ($scope, $location, listFactory, contactsFactory, shiftplansFactory) {
 		if (!($scope.planid = listFactory.getplanid())){
 			$location.path( "/list" );
 		};
@@ -66,9 +78,14 @@
 		'July', 'August', 'September', 'October', 'November', 'December'];
 		$scope.shiftplan = {};
 		$scope.shiftplan.day = {};
+		$scope.selected = {};
+		$scope.selected.year = moment().add(1, 'months').year();
+		$scope.selected.month = moment().add(1, 'months').month();
 
-		$scope.shiftplan.year = moment().add(1, 'months').year();
-		$scope.shiftplan.month = moment().add(1, 'months').month();
+		shiftplansFactory.getplan($scope.planid,$scope.selected.year,$scope.selected.month )
+		.success(function(data){
+			$scope.shiftplan = data;
+		});
 
 		$scope.showMonth = function(year, month){
 			$scope.calendar = {};
@@ -88,7 +105,7 @@
 			};
 		}
 
-		$scope.showMonth($scope.shiftplan.year, $scope.shiftplan.month);
+		$scope.showMonth($scope.selected.year, $scope.selected.month);
 
 
 
@@ -99,7 +116,7 @@
 		});
 		contactsFactory.getcontacts().success(function(data){
 			$scope.contacts=data;
-			console.log($scope.contacts);
+
 		});
 
 		$scope.selectWorker = function(id){
@@ -138,25 +155,32 @@
 		}
 
 		$scope.changeMonth = function(month){
-			var newMonth = moment([$scope.shiftplan.year, $scope.shiftplan.month]).add(month, 'months');
-			$scope.shiftplan.year = newMonth.year();
-			$scope.shiftplan.month = newMonth.month();
-			$scope.showMonth($scope.shiftplan.year, $scope.shiftplan.month);
-			console.log(month);
+			var newMonth = moment([$scope.selected.year, $scope.selected.month]).add(month, 'months');
+			$scope.selected.year = newMonth.year();
+			$scope.selected.month = newMonth.month();
+			$scope.showMonth($scope.selected.year, $scope.selected.month);
+			shiftplansFactory.getplan($scope.planid,$scope.selected.year,$scope.selected.month )
+			.success(function(data){
+				$scope.shiftplan = data;
+			});
 		}
 
 
 		$scope.update = function() {
+			console.log($scope.shiftplan);
+			console.log($scope.plan.name);
+			console.log($scope.planid);
+			console.log($scope.selected.year+$scope.selected.month);
 			$.post("create",
-				{
-					'plan':$scope.shiftplan,
-					'name':$scope.plan.name,
-					'pattern':$scope.planid,
-					'month': ""+$scope.shiftplan.year+$scope.shiftplan.month
-				},
-				function(result){
-					$(".content").html("<pre>"+result+'</pre>');
-				});
+			{
+				'plan':$scope.shiftplan,
+				'name':$scope.plan.name,
+				'pattern':$scope.planid,
+				'month': ""+$scope.selected.year+$scope.selected.month
+			},
+			function(result){
+				$(".content").html("<pre>"+result+'</pre>');
+			});
 		};
 
 	});

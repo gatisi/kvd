@@ -16,7 +16,7 @@ class CreateUsersShiftplansTable extends Migration {
 		{
 			$table->increments('id');
 			$table->integer('user_id');
-			$table->integer('shiftplan_id');
+			$table->integer('shiftpattern_id');
 			$table->boolean('manager');
 			$table->timestamps();
 		});

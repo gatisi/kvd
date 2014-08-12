@@ -5,23 +5,27 @@
 	</button>
 	<button type="button" class="btn btn-default btn-lg">
 		<span class="glyphicon glyphicon-calendar"></span>
-		<%shiftplan.year%>, <%monthNames[shiftplan.month]%>
+		<%selected.year%>, <%monthNames[selected.month]%>
 	</button>
 	<button type="button" class="btn btn-default btn-lg" ng-click="changeMonth(1)">
 		<span class="glyphicon glyphicon-chevron-right"></span>
 	</button>
 </div>
 <div class="row">
-	<div ng-repeat="worker in plan.workers" ng-if="contacts[worker] && !selectedWorker" class="col-md-2" ng-click="selectWorker(worker)">
+	<div ng-repeat="worker in plan.workers" ng-if="contacts[worker] && !selectedWorker" class="btn btn-default btn-sm" ng-click="selectWorker(worker)">
 		<%contacts[worker].first_name%> 
-		<%contacts[worker].last_name%> 
+		<%contacts[worker].last_name%>
+		<br>
 		<%contacts[worker].email%>
 	</div>
 
-	<div ng-model="selectedWorker" ng-click="clearSelectedWorker()" class="col-md-12">
+	<div ng-model="selectedWorker" ng-if="selectedWorker" ng-click="clearSelectedWorker()" class="btn btn-default btn-lg">
+		Selected <br>
 		<%selectedWorker.first_name%> 
 		<%selectedWorker.last_name%> 
 		<%selectedWorker.email%>
+		<br>
+		Click to change
 	</div>
 </div>
 
@@ -34,7 +38,7 @@
 			<%$index%> <span><%shift.start%> - <%shift.end%></span>
 
 			<button class="btn btn-default btn-xs btn-block" ng-model="added" ng-if="!shiftplan.day[day.date].shift[$index]" ng-click="setWorker(day.date, shift.start, shift.end, $index)">Add</button>
-			<div class="btn btn-success btn-sm btn-block" ng-if="shiftplan.day[day.date].shift[$index]" ng-click="setWorker(day.date, shift.start, shift.end, $index)">
+			<div class="btn btn-success btn-sm btn-block" ng-if="shiftplan.day[day.date].shift[$index]" ng-click="setWorker(day.date, shift.start, shift.end, $index)" ng-class="{'btn-info':shiftplan.day[day.date].shift[$index].worker.id==selectedWorker.id}">
 				<button type="button" class="close" ng-click="delWorker(day.date, $index)"><span aria-hidden="true">&times;</span></button>
 				<%$index%> <%shiftplan.day[day.date].shift[$index].worker.first_name%>
 			</div>

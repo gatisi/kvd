@@ -11,7 +11,7 @@
 	
 
 	@yield('stylesheets')
-
+ 
 </head>
 
 <body>

@@ -105,7 +105,7 @@ class User extends SentryUserModel implements UserInterface, RemindableInterface
 		}
 	}
 
-	public function Shiftplan(){
-		return $this->belongsToMany('Shiftplan', 'users_shiftplans', 'user_id', 'shiftplan_id')->withPivot(array('manager'));
+	public function ShiftPattern(){
+		return $this->belongsToMany('ShiftPattern', 'users_shiftplans', 'user_id', 'shiftpattern_id')->withPivot(array('manager'));
 	}
 }

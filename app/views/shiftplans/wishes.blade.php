@@ -2,11 +2,9 @@
 
 @section('content')
 
-<div ng-app="shiftplanerApp">
+<div ng-app="shiftWishesApp">
 <div ng-view></div>
 </div>
-
-
 
 @stop
 
@@ -29,6 +27,6 @@
 
 {{HTML::script('js/angular/angular.min.js')}}
 {{HTML::script('js/angular/angular-route.min.js')}}
-{{HTML::script('js/shiftplan/shiftplanerApp.js')}}
+{{HTML::script('js/shiftplan/shiftWishesApp.js')}}
 {{HTML::script('bower_resources/moment/min/moment.min.js')}}
 @stop
