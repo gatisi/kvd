@@ -58,6 +58,17 @@ shiftplanerApp.factory( 'shiftplansFactory', function($http, $location) {
 	}
 });
 
+shiftplanerApp.factory( 'staffWishlistFactory', function($http, $location) {
+	return{
+		getwishlists : function(pattern, year, month) {
+			return $http({
+				url: window.grafixapp.shiftplansURL+'/staffwishlists/'+pattern+'/'+year+'/'+month,
+				method: 'GET'
+			})
+		}
+	}
+});
+
 shiftplanerApp.controller('listController', function ($scope, $location, listFactory) {
 	$scope.list = {};
 	listFactory.getlist().success(function(data){
@@ -69,7 +80,7 @@ shiftplanerApp.controller('listController', function ($scope, $location, listFac
 	}
 });
 
-shiftplanerApp.controller('planController', function ($scope, $location, listFactory, contactsFactory, shiftplansFactory) {
+shiftplanerApp.controller('planController', function ($scope, $location, listFactory, contactsFactory, shiftplansFactory, staffWishlistFactory) {
 	if (!($scope.planid = listFactory.getplanid())){
 		$location.path( "/list" );
 	};
@@ -77,6 +88,7 @@ shiftplanerApp.controller('planController', function ($scope, $location, listFac
 	$scope.monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
 	'July', 'August', 'September', 'October', 'November', 'December'];
 	$scope.shiftplan = {};
+	$scope.wishlists = {};
 	$scope.shiftplan.day = {};
 	$scope.selected = {};
 	$scope.selected.year = moment().add(1, 'months').year();
@@ -90,7 +102,21 @@ shiftplanerApp.controller('planController', function ($scope, $location, listFac
 		});
 	}
 
+	var getWishlists = function(id, year, month){
+		staffWishlistFactory.getwishlists($scope.planid,$scope.selected.year,$scope.selected.month )
+		.success(function(data){
+			
+			for (index = 0; index < data.length; ++index) {
+				console.log(data[index]);
+				$scope.wishlists[data[index].user_id] = data[index];
+			}
+			console.log($scope.wishlists);
+
+		});
+	}
+
 	getShiftplan($scope.planid,$scope.selected.year,$scope.selected.month );
+	getWishlists($scope.planid,$scope.selected.year,$scope.selected.month );
 
 	var showMonth = function(year, month){
 		$scope.calendar = {};
@@ -125,9 +151,14 @@ shiftplanerApp.controller('planController', function ($scope, $location, listFac
 
 	$scope.selectWorker = function(id){
 		$scope.selectedWorker = $scope.contacts[id];
+		if($scope.wishlists[id]){
+			$scope.selectedWishlist = jQuery.parseJSON($scope.wishlists[id].list);
+			console.log($scope.selectedWishlist);
+		}
 	}
 	$scope.clearSelectedWorker = function(){
 		$scope.selectedWorker = false;
+		$scope.selectedWishlist = false;
 	}
 	$scope.arrFromInt = function(n){
 		var arr = [];

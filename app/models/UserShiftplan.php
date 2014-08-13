@@ -11,4 +11,17 @@ class UserShiftplan extends Eloquent {
 		if($res<1){$res = false;}
 		return $res;
 	}
+
+	public function allUsers($pattern_id){
+		$res = $this->
+		where('shiftpattern_id','=',$pattern_id)->
+		where('uses','=',1)->
+		get(array('user_id'))->
+		toArray();
+		$arrOfIds = array();
+		foreach ($res as $id) {
+			$arrOfIds[]=$id['user_id'];
+		}
+		return $arrOfIds;
+	}
 }

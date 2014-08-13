@@ -17,11 +17,14 @@ class ShiftPatternController extends BaseController {
 		$shiftPattern->pattern = Input::has('shifts') ? json_encode(Input::get('shifts'), JSON_FORCE_OBJECT) : '';
 
 		$shiftPattern->save();
+
 		$syncData = array();
 		foreach ($workers as $key => $id) {
-			$syncData[$id]=array('manager'=>0, 'accepted'=>0);
+			$syncData[$id]=array('manager'=>0, 'accepted'=>0, 'uses'=>1);
 		}
-		$syncData[$manager] = array('manager'=>1, 'accepted'=>1);
+		//$syncData[$manager] = array('manager'=>1, 'accepted'=>1);
+		$syncData[$manager]['manager'] = 1;
+		$syncData[$manager]['accepted']=1;
 		$shiftPattern->users()->sync($syncData);
 		echo "done";
 

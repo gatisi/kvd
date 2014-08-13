@@ -31,15 +31,32 @@
 
 <div class="row t-row" ng-repeat="week in month track by $index" >
 	<div class="col-md-<%ofset%>" ng-if="$index == 0"></div>
-	<div ng-repeat="day in week track by $index" ng-class="{'col-md-2': day.weekday<6, 'col-md-1': day.weekday>5}" class="t-cell">
+	<div 	ng-repeat="day in week track by $index" 
+			ng-class="{'col-md-2': day.weekday<6, 'col-md-1': day.weekday>5}" 
+			class="t-cell">
 		<%day.date%>
 
-		<div ng-if="plan.pattern[day.weekday-1]" ng-repeat="shift in plan.pattern[day.weekday-1] track by $index">
+		<div ng-if="plan.pattern[day.weekday-1]" 
+			 ng-repeat="shift in plan.pattern[day.weekday-1] track by $index">
 			<%$index%> <span><%shift.start%> - <%shift.end%></span>
 
-			<button class="btn btn-default btn-xs btn-block" ng-model="added" ng-if="!shiftplan.day[day.date].shift[$index]" ng-click="setWorker(day.date, shift.start, shift.end, $index)">Add</button>
-			<div class="btn btn-success btn-sm btn-block" ng-if="shiftplan.day[day.date].shift[$index]" ng-click="setWorker(day.date, shift.start, shift.end, $index)" ng-class="{'btn-info':shiftplan.day[day.date].shift[$index].worker.id==selectedWorker.id}">
-				<button type="button" class="close" ng-click="delWorker(day.date, $index)"><span aria-hidden="true">&times;</span></button>
+			<button class="btn btn-default btn-xs btn-block" 
+					ng-if="!shiftplan.day[day.date].shift[$index]" 
+					ng-click="setWorker(day.date, shift.start, shift.end, $index)" 
+					ng-class="{'btn-danger':selectedWishlist[day.date][$index]==-1,
+							   'btn-success':selectedWishlist[day.date][$index]==1,		
+							   }">
+				<span class="glyphicon glyphicon glyphicon-thumbs-down" ng-if="selectedWishlist[day.date][$index]==-1"></span>
+				<span class="glyphicon glyphicon glyphicon-thumbs-up" ng-if="selectedWishlist[day.date][$index]==1"></span>
+				Add
+			</button>
+			<div class="btn btn-success btn-sm btn-block" ng-if="shiftplan.day[day.date].shift[$index]" 
+				 ng-click="setWorker(day.date, shift.start, shift.end, $index)" 
+				 ng-class="{'btn-info':shiftplan.day[day.date].shift[$index].worker.id==selectedWorker.id}">
+			
+				<button type="button" class="close" ng-click="delWorker(day.date, $index)">
+					<span aria-hidden="true">&times;</span>
+				</button>
 				<%$index%> <%shiftplan.day[day.date].shift[$index].worker.first_name%>
 			</div>
 
