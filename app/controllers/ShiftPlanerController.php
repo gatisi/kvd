@@ -33,7 +33,7 @@ class ShiftPlanerController extends \BaseController {
 	public function postCreate(){
 		var_dump($_POST);
 		$user = User::find(Sentry::getUser()->id);
-		$plan = Shiftplan::firstOrNew(array('month'=>Input::get('month')));
+		$plan = Shiftplan::firstOrNew(array('month'=>Input::get('month'), 'pattern_id'=>Input::get('pattern')));
 		$plan->month = Input::get('month');
 		$plan->name = Input::has('name') ? Input::get('name') : 'unspecified';
 		$plan->pattern_id = Input::has('pattern') ? Input::get('pattern') : 0;
