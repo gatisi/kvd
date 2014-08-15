@@ -94,8 +94,9 @@ class User extends SentryUserModel implements UserInterface, RemindableInterface
 
 	/* ads new contact to curent user - if pivot not found, pivot added. */
 	public function saveContact($id){
+		//$contact = Contact::firstOrNew(array('user_id' => $this->id, 'contact_id'=>$id));
 		$contact = new Contact;
-		if(!$contact->whereUser_idAndContact_id($this->id, $id)->get()->first()){
+		if(!$contact->whereUser_idAndContact_id($this->id, $id)->get()->first()&&($this->id!=$id)){
 			$contact->user_id = $this->id;
 			$contact->contact_id = $id;
 			$contact->save();

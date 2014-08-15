@@ -1,21 +1,27 @@
 @extends('layouts.full')
 
 @section('content')
-
-<div ng-app="shiftplanerApp">
-<div ng-view></div>
+<div ng-app="homeApp">
+	<div ng-controller="acceptNewPlans">
+		<div ng-repeat="plan in newPlans">
+			<h2><%plan.name%></h2>
+			<button ng-click="acceptPlan(plan.id)">Accept</button>
+			<button ng-click="rejectPlan(plan.id)">Reject</button>
+		</div>
+	</div>
 </div>
-
-
-
 @stop
+
+
+
+
+
 
 @section('stylesheets')
-	{{ HTML::style('css/shiftplanerApp.css') }}
 @stop
-
-
 @section('scripts')
+{{HTML::script('js/angular/angular.min.js')}}
+{{HTML::script('js/shiftplan/HomeApp.js')}}
 <!-- Routs config for JS -->
 <script>
 	if (!window.grafixapp) {
@@ -27,9 +33,4 @@
 
 }
 </script>
-
-{{HTML::script('js/angular/angular.min.js')}}
-{{HTML::script('js/angular/angular-route.min.js')}}
-{{HTML::script('js/shiftplan/shiftplanerApp.js')}}
-{{HTML::script('bower_resources/moment/min/moment.min.js')}}
 @stop

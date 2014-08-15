@@ -9,4 +9,5 @@ class ShiftPattern extends Eloquent {
 	public function users(){
 		return $this->belongsToMany('User', 'users_shiftplans', 'shiftpattern_id', 'user_id')->withPivot(array('manager'));
 	}
+
 }
