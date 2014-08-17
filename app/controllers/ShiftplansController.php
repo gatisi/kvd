@@ -9,19 +9,22 @@ class ShiftplansController extends \BaseController {
 
 	public function getWishes()
 	{
-		return View::make('shiftplans/wishes');
+		return View::make('shiftplans/wishes')->with('user_unsecure', Sentry::getUser()->id);
 	}
 
 	public function getList()
 	{
 		$user = User::find(Sentry::getUser()->id);
-		$plans = $user->ShiftPattern()->where('accepted','=',1)->get(array('name', 'shift_patterns.id', 'pattern'))->all();
+		$plans = $user->ShiftPattern()
+		->where('accepted','=',1)->get(array('name', 'shift_patterns.id', 'pattern', 'workers'))
+		->all();
 
 		foreach ($plans as $p) {
 			$list[$p->id]=array(
 				'name'=>$p->name,
 				'id'=>$p->id,
-				'pattern'=>$p->pattern
+				'pattern'=>$p->pattern,
+				'workers'=>$p->workers
 				);
 		}
 		return $list;
@@ -103,7 +106,6 @@ class ShiftplansController extends \BaseController {
 			$wishlist->list = $list;
 			$wishlist->save();
 		}
-
 	}	
 
 }
